@@ -1,0 +1,76 @@
+---
+title: "Regression Course Project"
+author: "Scott Roberts"
+date: "March 27, 2016"
+output: 
+  pdf_document: 
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Executive Summary
+
+We at Motor Trend wanted to find out which type of transmission affects Miles Per Gallon(MPG). Beasd on the models the best transmission for MPG is a manual transmission. The difference in MPG difference between automatic and manual transmissions 7.2 miles per gallon.
+
+Data
+
+First we use the mtcars data set. 
+32 observations on 11 variables.
+
+mpg	Miles/(US) gallon
+cyl	Number of cylinders
+disp	Displacement (cu.in.)
+hp	Gross horsepower
+drat	Rear axle ratio
+wt	Weight (1000 lbs)
+qsec	1/4 mile time
+vs	V/S
+am	Transmission (0 = automatic, 1 = manual)
+gear	Number of forward gears
+carb	Number of carburetors
+
+Exploratory Analysis
+
+We start exploring with some plots of the data.
+
+```{r cars }
+mtcars <- transform(mtcars, AM = factor(am))
+boxplot(mtcars$mpg~AM, mtcars, xlab = "Transmission Type", ylab = "MPG", title="MPG by Transmission Type")
+
+```
+Regression Models
+Our first model involves the all variables.
+```{r cars all}
+
+summary(lm(mpg~., mtcars))
+```
+Secondarily, we start looking into the transmission variable, am. Using a linear model, we analyze the effect of am, as a factor, on mpg. What we see is that the coeffcients for Manual and Automatic Transmission tells us the miles per gallon for each.  The Manual Transmission mpg is 24.39 and the Automatic is 17.15.
+```{r trans }
+tranny <-lm(mpg~factor(am)-1, mtcars)
+summary(tranny)
+###Model for Automatic Transmissions
+predict(tranny, newdata = data.frame(am = 1), interval = "prediction")
+
+###Model for Manual Transmissions
+predict(tranny, newdata = data.frame(am = 0), interval = "prediction")
+
+```
+We then can look at another model of how transmission represents the variation proportion accounted for in mpg. What reveals is that the R-squared is only 0.3598, where only 36% of the variation in mpg can be explained by transmission.
+
+``` {r trans2}
+summary(lm(mpg~am, mtcars))
+```
+Appendix
+
+Residual Plot and Analysis
+```{r mtcars, echo=TRUE}
+par(mfrow = c(2, 2))
+plot(tranny, which=2)
+plot(tranny, which=3)
+plot(tranny, which=4)
+
+```
+
+
